@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\FileRequest;
 use App\Models\File;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,8 @@ class FileController extends Controller
      */
     public function index()
     {
-        //
+        $files = File::all();
+        return view('files.index', compact('files'));
     }
 
     /**
@@ -24,7 +26,7 @@ class FileController extends Controller
      */
     public function create()
     {
-        //
+        return view('files.create');
     }
 
     /**
@@ -33,9 +35,11 @@ class FileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(FileRequest $request)
     {
-        //
+        File::create($request->all());
+
+        return redirect()->route('files.index')->with('success', 'Archivo subido exitosamente.');
     }
 
     /**
@@ -46,7 +50,7 @@ class FileController extends Controller
      */
     public function show(File $file)
     {
-        //
+        return view('files.show', compact('file'));
     }
 
     /**
@@ -57,7 +61,7 @@ class FileController extends Controller
      */
     public function edit(File $file)
     {
-        //
+        return view('files.edit', compact('file'));
     }
 
     /**
@@ -67,9 +71,10 @@ class FileController extends Controller
      * @param  \App\Models\File  $file
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, File $file)
+    public function update(FileRequest $request, File $file)
     {
-        //
+        $file->update($request->all());
+        return redirect()->route('files.index')->with('success', 'Archivo actualizado exitosamente.');
     }
 
     /**
@@ -80,6 +85,7 @@ class FileController extends Controller
      */
     public function destroy(File $file)
     {
-        //
+        $file->delete();
+        return redirect()->route('files.index')->with('success', 'Archivo eliminado exitosamente.');
     }
 }
