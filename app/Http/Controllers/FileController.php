@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\FileRequest;
 use App\Models\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use SplFileInfo;
 
 class FileController extends Controller
 {
@@ -37,7 +40,41 @@ class FileController extends Controller
      */
     public function store(FileRequest $request)
     {
-        File::create($request->all());
+
+        $isfile = $request->file('file');
+
+        if($isfile){
+            $fileType = $request->file->extension();
+            $filesize = round(((filesize($isfile)/1024)/1024),2);
+            $newFileName = time().'.'.$request->file->extension();
+            $fileName = $isfile->getClientOriginalName() ;
+            $destinationPath = public_path().'/myfiles' ;
+            $isfile->move($destinationPath,$fileName);
+
+            //$isfile->storeAs($destinationPath, $newFileName);
+
+            //$pathfile = Storage::disk('public')->putFile('folders/inside/public', $request->file('post_image'));
+            File::create([
+                'user_id' => Auth::user()->id,
+                'filename' => $request->file->getClientOriginalName(),
+                'filetype' => $fileType,
+                'filesize' => $filesize,
+                'fileurl' => $fileName
+            ]);
+            //dd($isfile->getRealPath());
+            /* $info = new SplFileInfo($isfile);
+            var_dump($info->getExtension()); */
+
+            //dd($isfile->getClientOriginalName());
+        }
+        //File::create($request->all());
+        /* $file = File::create([
+            'user_id' => Auth::user()->id,
+            'filename' => $request->filename,
+        ]); */
+
+        //$miniature = CloudinaryStorage::upload($miniature_file->getRealPath(), $miniature_file->getClientOriginalName(), 'radio/noticias');
+
 
         return redirect()->route('files.index')->with('success', 'Archivo subido exitosamente.');
     }

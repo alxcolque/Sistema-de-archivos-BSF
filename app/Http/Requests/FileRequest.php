@@ -24,11 +24,11 @@ class FileRequest extends FormRequest
     public function rules()
     {
         return [
-            'filename' => 'required|max:50',
+            /* 'filename' => 'required|max:50',
             'fileurl' => 'required',
             'filetype' => 'required',
-            'filesize' => 'required',
-            'user_id' => 'required'
+            'filesize' => 'required', */
+            /* 'user_id' => 'required' */
         ];
     }
 }
